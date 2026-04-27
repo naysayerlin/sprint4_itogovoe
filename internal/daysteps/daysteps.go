@@ -3,6 +3,7 @@ package daysteps
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -19,14 +20,18 @@ const (
 
 func parsePackage(data string) (int, time.Duration, error) {
 	sliceStrok := strings.Split(data, ",")
-	if len(sliceStrok) < 2 {
-		return 0, 0, errors.New("Нехватка параметров")
+	if len(sliceStrok) < 2 || len(sliceStrok) > 2 {
+		paramsError := errors.New("Неверное кол-во параметров")
+		log.Println(paramsError)
+		return 0, 0, paramsError
 	}
 	stepCount, err := strconv.Atoi(sliceStrok[0])
 	if err != nil {
-		return 0, 0, errors.New("Ошибка конвертации шагов")
+		log.Println(err)
+		return 0, 0, err
 	}
 	if stepCount <= 0 {
+		log.Println(err)
 		return 0, 0, errors.New("Вы бездельник-седун, пройдитесь!")
 	}
 	timeOfWalk, err := time.ParseDuration(sliceStrok[1])
@@ -34,7 +39,9 @@ func parsePackage(data string) (int, time.Duration, error) {
 		return 0, 0, fmt.Errorf("Ошибка конвертации времени: %w\n", err)
 	}
 	if timeOfWalk <= 0 {
-		return 0, 0, errors.New("Вы сегодня не ходили, пройдитесь")
+		timeError := errors.New("Вы сегодня не ходили, пройдитесь")
+		log.Println(timeError)
+		return 0, 0, timeError
 	}
 	return stepCount, timeOfWalk, nil
 

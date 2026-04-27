@@ -78,14 +78,23 @@ func TrainingInfo(data string, weight, height float64) (string, error) {
 		return fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n", activity, timeOfWalk.Hours(), dist, avgSpeed, calories), nil
 
 	default:
-		return fmt.Sprintln("неизвестный тип тренировки"), err
+		return "", errors.New("неизвестный тип тренировки")
 	}
 
 }
 
 func RunningSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
-	if steps <= 0 || weight <= 0 || height <= 0 || duration <= 0 {
-		return 0, errors.New("Ошибка данных")
+	if steps <= 0 {
+		return 0, errors.New("Количество шагов не указано либо некорректно")
+	}
+	if weight <= 0 {
+		return 0, errors.New("Вес либо равен нулю либо отрицательный")
+	}
+	if height <= 0 {
+		return 0, errors.New("Рост либо равен нулю либо отрицательный")
+	}
+	if duration <= 0 {
+		return 0, errors.New("Продолжительность тренировки равна нулю либо отрицательна")
 	}
 	avgSpeed := meanSpeed(steps, height, duration)
 	durationInMins := duration.Minutes()
